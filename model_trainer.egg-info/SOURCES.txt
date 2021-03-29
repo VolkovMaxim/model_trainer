@@ -1,9 +1,0 @@
-README.md
-setup.py
-model_trainer/__init__.py
-model_trainer/volkov.py
-model_trainer.egg-info/PKG-INFO
-model_trainer.egg-info/SOURCES.txt
-model_trainer.egg-info/dependency_links.txt
-model_trainer.egg-info/requires.txt
-model_trainer.egg-info/top_level.txt
