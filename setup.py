@@ -21,11 +21,9 @@ def read_requirements():
 
 
 setup(name="model_trainer",
-      packages=find_packages(include=["mypythonlib"]),
+      packages=find_packages(include=["model_trainer"]),
       vesion="0.1.0",
       description="True validation",
       author="wolk1612",
-      setup_requires=["pytest-runner"],
-      tests_require=["pytest"],
       **read_requirements()
       )
