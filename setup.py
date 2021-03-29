@@ -1,7 +1,4 @@
 from setuptools import find_packages, setup
-import os
-
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 setup(name="model_trainer",
