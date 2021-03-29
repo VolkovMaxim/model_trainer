@@ -6,6 +6,6 @@ setup(name="model_trainer",
       vesion="0.1.0",
       description="True validation",
       author="wolk1612",
-      install_requires=["tqdm", "IPython", "collections", "torch",
+      install_requires=["tqdm", "IPython", "torch",
                         "copy", "numpy", "scipy", "matplotlib", "abc"]
       )
