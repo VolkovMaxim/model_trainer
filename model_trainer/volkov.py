@@ -30,7 +30,7 @@ class ModelTrainer(ABC):
         self.metric = metric
         self.best_val_metric = np.NINF
         self.best_iter = -1
-        self.best_model = self.model
+        self.best_model = copy.deepcopy(self.model.state_dict())
         self.early_stopping_rounds = early_stopping_rounds 
 
     def reset_optimizer(self, optimizer):
@@ -100,7 +100,6 @@ class ModelTrainer(ABC):
                 all_output.append(output)
                 all_y.append(y)
 
-
             output = torch.cat(all_output)
             y = torch.cat(all_y)
 
@@ -149,7 +148,7 @@ class ModelTrainer(ABC):
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = default_lr
 
-        fig, axes = fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(24, 10))
+        fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(24, 10))
         plt.sca(axes[0])
         plt.plot(logs['lr'], logs['acc'])
         plt.xscale('log')
@@ -210,7 +209,7 @@ class ModelTrainer(ABC):
         plt.show()
 
     def use_best_model(self):
-        self.model = self.best_model
+        self.model.load_state_dict(self.best_model)
         for log in self.logs:
             self.logs[log] = self.logs[log][:self.best_iter * 
                                                 ((not (("val" in log) or ("steps" in log))) * self.logs["steps"][0] + 1)]
@@ -238,12 +237,12 @@ class ModelTrainer(ABC):
             early_stopping_rounds=None):
 
         self.set_params(optimizer or self.optimizer, 
-                loss_function or self.loss_function,
-                epochs or self.epochs,
-                save_model or self.save_model,
-                scheduler or self.scheduler,
-                metric or self.metric,
-                early_stopping_rounds or self.early_stopping_rounds)
+                        loss_function or self.loss_function,
+                        epochs or self.epochs,
+                        save_model or self.save_model,
+                        scheduler or self.scheduler,
+                        metric or self.metric,
+                        early_stopping_rounds or self.early_stopping_rounds)
 
         self.model.to(self.device)
 
@@ -253,15 +252,15 @@ class ModelTrainer(ABC):
             epochs_wo_improvement += 1
             self._train_epoch(train_loader)
             
-            #if val_loader:
-            val_logs = self.validate(val_loader)
-            for k, v in val_logs.items():
-                self.logs[f'val_{k}'].extend(v)
+            if val_loader:
+                val_logs = self.validate(val_loader)
+                for k, v in val_logs.items():
+                    self.logs[f'val_{k}'].extend(v)
 
             if self.save_model and self.logs["val_acc"][-1] > self.best_val_metric:
-                torch.save(self.model.state_dict(), self.save_model)
+                torch.save(self.model.state_dict(), self.save_model + "_" + str(epochs))
                 self.best_val_metric = self.logs["val_acc"][-1]
-                self.best_model = copy.deepcopy(self.model)
+                self.best_model = copy.deepcopy(self.model.state_dict())
                 self.best_iter = len(self.logs["val_acc"])
                 epochs_wo_improvement = 0
 
