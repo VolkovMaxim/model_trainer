@@ -258,7 +258,7 @@ class ModelTrainer(ABC):
                     self.logs[f'val_{k}'].extend(v)
 
             if self.save_model and self.logs["val_acc"][-1] > self.best_val_metric:
-                torch.save(self.model.state_dict(), self.save_model + "_" + str(epochs))
+                torch.save(self.model.state_dict(), self.save_model + "_" + str(epoch + 1))
                 self.best_val_metric = self.logs["val_acc"][-1]
                 self.best_model = copy.deepcopy(self.model.state_dict())
                 self.best_iter = len(self.logs["val_acc"])
